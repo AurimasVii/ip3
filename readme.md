@@ -5,21 +5,19 @@
 
 - `EmailNotifier` – siunčia el. laiškus per `libcurl`
 - `SMSNotifier` – siunčia SMS per Twilio API
-- `FakeNotifier` – skirta testavimui (rašoma į failą)
 
 ## Projekto struktūra
 
 ```
 .
-├── demo.cpp              # Pagrindinis demonstracinis failas
-├── test.cpp              # Testai su FakeNotifier
-├── notifier.hpp          # Bazinė abstrakti klasė Notifier
-├── emailNotifier.cpp     # Email siuntimo strategija
-├── smsNotifier.cpp       # SMS siuntimo strategija
-├── fakeNotifier.cpp      # Testams skirta strategija (į failą)
-├── MessageSender.hpp     # Stabili/Pastovi klasė
-├── Makefile              # Kompiliavimo ir paleidimo automatizacija
-└── README.md             # Šis failas
+├── demo.cpp                        # Pagrindinis demonstracinis failas
+├── test.cpp                        # Testai su FakeNotifier
+├── notifier.hpp                    # Bazinė abstrakti klasė Notifier
+├── emailNotifier.cpp               # Email siuntimo strategija
+├── smsNotifier.cpp                 # SMS siuntimo strategija
+├── MessageSender.hpp               # Stabili/Pastovi klasė
+├── Makefile                        # Kompiliavimo ir paleidimo automatizacija
+└── README.md                       # Šis failas
 ```
 
 ## Reikalavimai
@@ -35,32 +33,21 @@
 2. Paleisk:
 
 ```
-make
+make all
 ```
-
-Tai sukurs `demo.exe` ir `test.exe`.
 
 ## Paleidimas
 
 ```
-make rundemo   # paleidžia demo (realus siuntimas)
-make runtest   # paleidžia testą su FakeNotifier
+make run_demo   # paleidžia demo (realus siuntimas)
+make run_test   # paleidžia testą su neigyvendinta klase
 ```
 
 ## Valymas
 
 ```
-make clean     # Ištrina demo.exe ir test.exe
+make clean    
 ```
-
-## Testavimo elgsena
-
-`test.cpp`:
-
-- Tikrina ar `FakeNotifier` teisingai įrašė pranešimą į `test_output.txt`
-- Tikrina ar visos `getLast*` funkcijos grąžina korektiškus duomenis
-- Tikrina ar logai (`MessageSender`) veikia kaip tikėtasi
-- **Testas nesikompiliuos**, jei `FakeNotifier` klasė nėra įgyvendinta
 
 ## Dizaino šablonas
 
