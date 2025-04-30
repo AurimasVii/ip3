@@ -1,6 +1,6 @@
-#include "MessageSender.hpp"
-#include "emailNotifier.cpp"
-#include "smsNotifier.cpp"
+#include "MessageSender.h"
+#include "emailNotifier.h"
+#include "smsNotifier.h"
 
 int main() {
     std::string yourEmail = "";

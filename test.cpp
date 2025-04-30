@@ -1,10 +1,27 @@
-#include "MessageSender.hpp"
-#include "fakeNotifier.cpp"
+#include "MessageSender.h"
 #include <cassert>
 #include <iostream>
 #include <fstream>
 
-bool fileContains(const std::string& filename, const std::string& content) {
+/*
+    Dar viena klase galetu buti skirta siusti zinutes/pranesimus i faila ir tuo paciu metu i konsole.
+    Klase paveldetu 'Notifier' klase ir implementuotu 'send' metoda.
+
+    Bazine klase:
+    'Notifier' klase apibrėžia visų pranešimų siuntimo strategijų sąsają. Ji turi šiuos grynus virtualius metodus:
+        - void send(const std::string& recipient, const std::string& sender, const std::string& password, const std::string& message)
+
+    Nauja klase turetu implementuoti:
+    - 'FileAndConsoleNotifier' turetu implementuoti 'send' metoda, kuris:
+        1. Iraso zinute i nurodyta faila.
+        2. Isveda zinute i konsole.
+
+    Testavimas:
+        Toliau pateikti testai patikrina 'FileAndConsoleNotifier' klasės veikimą. Jei klasė yra teisingai įgyvendinta, šis testų failas turėtų kompiliuotis ir sėkmingai veikti, išvesdamas "TEST PASSED".
+
+*/
+
+bool fileContains(const std::string& filename, const std::string& content) { //funkcija tikrina ar failas turi nurodyta turini
     std::ifstream file(filename);
     std::string line;
     while (std::getline(file, line)) {
@@ -14,30 +31,32 @@ bool fileContains(const std::string& filename, const std::string& content) {
 }
 
 int main() {
-    FakeNotifier fake;
-    MessageSender sender(&fake);
+    // Test FileAndConsoleNotifier taip galetu buti pavadinta nauja klase, kuri paveldi 'Notifier' klase
+    // ir implementuoja 'send' metoda, kuris iraso zinute i faila ir isveda i konsole.
+    const std::string testFile = "test_output.txt";
+    FileAndConsoleNotifier fileAndConsoleNotifier(testFile);
+    MessageSender sender(&fileAndConsoleNotifier);
 
     std::string recipient = "test@example.com";
     std::string senderAddress = "noreply@example.com";
     std::string password = "secret123";
     std::string message = "Test message content";
 
-    sender.sendNotification(recipient, senderAddress, password, message); //polimorfizmas
+    // Send notification
+    sender.sendNotification(recipient, senderAddress, password, message);
 
-    assert(fake.getLastRecipient() == recipient);
-    assert(fake.getLastSender() == senderAddress);
-    assert(fake.getLastPassword() == password);
-    assert(fake.getLastMessage() == message);
+    // Verify file content
+    assert(fileContains(testFile, "Recipient: " + recipient));
+    assert(fileContains(testFile, "Sender: " + senderAddress));
+    assert(fileContains(testFile, "Message: " + message));
 
-    assert(fileContains("test_output.txt", recipient));
-    assert(fileContains("test_output.txt", senderAddress));
-    assert(fileContains("test_output.txt", password));
-    assert(fileContains("test_output.txt", message));
+    // Verify console output (manual verification required)
+    std::cout << "Check console output for correctness.\n";
 
-
+    // Verify logs
     std::string logs = sender.getLogsAsString();
     assert(logs.find("Sent: " + message + " to " + recipient) != std::string::npos);
 
-    std::cout << "TEST PASSED: All FakeNotifier methods and logging verified.\n";
+    std::cout << "TEST PASSED: FileAndConsoleNotifier methods verified.\n";
     return 0;
 }

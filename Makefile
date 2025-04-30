@@ -1,16 +1,39 @@
-all: demo test
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra -g
+LDFLAGS = -lcurl
 
-demo: demo.cpp emailNotifier.cpp smsNotifier.cpp
-	g++ demo.cpp emailNotifier.cpp smsNotifier.cpp -std=c++17 -lcurl -o demo.exe
+CLASS_OBJ = MessageSender.o emailNotifier.o smsNotifier.o
+CLASS_SRC = MessageSender.cpp emailNotifier.cpp smsNotifier.cpp
+CLASS_HEADER = MessageSender.h emailNotifier.h smsNotifier.h
+DEMO_SRC = demo.cpp
+TEST_SRC = test.cpp
 
-test: test.cpp MessageSender.hpp FakeNotifier.cpp notifier.hpp
-	g++ test.cpp -std=c++17 -lcurl -o test.exe
+DEMO_BIN = demo
+TEST_BIN = test
 
-rundemo: demo
-	./demo.exe
+TEST_LOG = log.txt
 
-runtest: test
-	./test.exe
+all: build_class build_demo build_test
+
+build_class: $(CLASS_SRC) $(CLASS_HEADER)
+	$(CXX) $(CXXFLAGS) -c $(CLASS_SRC)
+
+build_demo: build_class $(DEMO_SRC)
+	$(CXX) $(CXXFLAGS) $(CLASS_OBJ) $(DEMO_SRC) -o $(DEMO_BIN) $(LDFLAGS)
+
+FileAndConsoleNotifier.o: FileAndConsoleNotifier.cpp FileAndConsoleNotifier.h
+	$(CXX) $(CXXFLAGS) -c FileAndConsoleNotifier.cpp
+
+build_test: build_class FileAndConsoleNotifier.o $(TEST_SRC)
+	$(CXX) $(CXXFLAGS) $(CLASS_OBJ) FileAndConsoleNotifier.o $(TEST_SRC) -o $(TEST_BIN) $(LDFLAGS)
+
+run_demo: build_demo
+	./$(DEMO_BIN)
+
+run_test: build_test
+	./$(TEST_BIN)
 
 clean:
-	rm demo.exe test.exe > nul || rm -f demo.exe test.exe
+	rm -f $(DEMO_BIN) $(TEST_BIN) $(CLASS_OBJ) $(TEST_LOG) *.exe
+
+run_all: run_demo run_test
